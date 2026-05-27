@@ -27,15 +27,14 @@ func Schedules(config *Config) error {
 		if err != nil {
 			return err
 		}
-		members, err := s.Client.GetUserGroupMembers(userGroup.ID)
+		members, err := s.getUserGroupMembers(userGroup.ID)
 		if err != nil {
 			return err
 		}
 
 		if !compare.Array(slackIDs, members) {
 			logrus.Infof("member list %s needs updating...", groupName)
-			_, err = s.Client.UpdateUserGroupMembers(userGroup.ID, strings.Join(slackIDs, ","))
-			if err != nil {
+			if err := s.updateUserGroupMembers(userGroup.ID, strings.Join(slackIDs, ",")); err != nil {
 				return err
 			}
 		}
